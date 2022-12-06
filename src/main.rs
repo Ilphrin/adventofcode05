@@ -1,3 +1,4 @@
+use std::env;
 use std::fs;
 
 fn separator(lines: &Vec<&str>) -> Vec<usize> {
@@ -40,6 +41,7 @@ fn construct_stacks(lines: &Vec<&str>, start: usize, columns: usize) -> Vec<Vec<
 }
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
     let contents =
         fs::read_to_string("./input.txt").expect("Should have been able to read the file");
     let splitted_content = contents.split("\n").collect::<Vec<&str>>();
@@ -53,9 +55,21 @@ fn main() {
         if order.len() == 6 {
             let destination: usize = order[5].parse().unwrap();
             let from: usize = order[3].parse().unwrap();
-            for _remaining_to_remove in 0..(order[1].parse().unwrap()) {
-                let removed = stacks[from - 1].pop().unwrap();
-                stacks[destination - 1].push(removed);
+            if args.len() == 2 && args[1] == "2" {
+                let mut intermediary_vec: Vec<char> = Vec::new();
+                for _remaining_to_remove in 0..(order[1].parse().unwrap()) {
+                    let removed = stacks[from - 1].pop().unwrap();
+                    intermediary_vec.push(removed);
+                }
+                for _i in 0..(intermediary_vec.len()) {
+                    let removed = intermediary_vec.pop().unwrap();
+                    stacks[destination - 1].push(removed);
+                }
+            } else {
+                for _remaining_to_remove in 0..(order[1].parse().unwrap()) {
+                    let removed = stacks[from - 1].pop().unwrap();
+                    stacks[destination - 1].push(removed);
+                }
             }
         }
     }
